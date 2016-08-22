@@ -25,14 +25,10 @@ router.get('/', function(req, res, next) {
       promises.push(Authors_Books().select().where({author_id:authors[i].id}).join('books', 'books.id', '=', 'authors_books.book_id'))
     }
     return Promise.all(promises).then(function(results){
-      var out=[];
-      results=results.reverse()
-      authors.forEach(function(value){
-        value.books=results.pop()
-        out.push(value)
-      })
-
-      res.render('authors/index', {authors:out})
+      res.render('authors/index', {authors:authors.map(function(author, i){
+        author.books=results[i]
+        return author
+      })})
     })
   })
   // THEN for each author, go get all of their book ids from Authors_Books
